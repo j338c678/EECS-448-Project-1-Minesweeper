@@ -43,8 +43,15 @@ def print_board2():
                 screen.blit(flag, grid[j][i])
 
     pygame.draw.rect(screen, (255, 255, 255),
-                     ((column * 20 + MARGIN * column + MARGIN), 0, 100,50))
-    screen.blit(font.render('cheatmode!', True, (255, 0, 0)), (column * 20 + MARGIN * column + MARGIN, 20))
+                     ((column * 20 + MARGIN * column + MARGIN), 5, 100,20))
+    screen.blit(font.render('cheatmode!', True, (255, 0, 0)), (column * 20 + MARGIN * column + MARGIN+5, 8))
+    pygame.draw.rect(screen, (255, 255, 255),
+                     ((column * 20 + MARGIN * column + MARGIN), 30, 100, (row-1)*(20+MARGIN)-5))
+
+    screen.blit(font.render('Flag left:', True, (255, 0, 0)), (column * 20 + MARGIN * column + MARGIN+5, 32))
+    screen.blit(font.render(str(exe.gameBoard.num_bombs-exe.gameBoard.num_flagged), True, (255, 0, 0)), (column * 20 + MARGIN * column + MARGIN+70, 32))
+
+
 
 
     pygame.display.flip()
@@ -86,8 +93,16 @@ def print_board():
             if exe.gameBoard.board[j][i].isFlagged == True and exe.gameBoard.board[j][i].isVisible == False:
                 screen.blit(flag,grid[j][i])
 
-    pygame.draw.rect(screen, (255, 255, 255), ((column*20+MARGIN*column+MARGIN), 0, 100, 50))
-    screen.blit(font.render('cheatmode!', True, (255, 0, 0)), (column*20+MARGIN*column+MARGIN, 20))
+    pygame.draw.rect(screen, (255, 255, 255),
+                     ((column * 20 + MARGIN * column + MARGIN), 5, 100, 20))
+    screen.blit(font.render('cheatmode!', True, (255, 0, 0)), (column * 20 + MARGIN * column + MARGIN + 5, 8))
+    pygame.draw.rect(screen, (255, 255, 255),
+                     ((column * 20 + MARGIN * column + MARGIN), 30, 100, (row - 1) * (20 + MARGIN) - 5))
+
+    screen.blit(font.render('Flag left:', True, (255, 0, 0)), (column * 20 + MARGIN * column + MARGIN + 5, 32))
+    screen.blit(font.render(str(exe.gameBoard.num_bombs - exe.gameBoard.num_flagged), True, (255, 0, 0)),
+                (column * 20 + MARGIN * column + MARGIN + 70, 32))
+
     pygame.display.update()
     pygame.display.flip()
 
@@ -133,6 +148,7 @@ while (incorrect == True):
         w = int(inputScreen.getWidth())
         h = int(inputScreen.getHeight())
         b = int(inputScreen.getBombNum())
+
         if (40>= w >= 2) and (72>= h >= 2) and (b >= 1) and 1 <= ((w*h)-b) <= 1088:
             incorrect = False
         if(incorrect == True):
@@ -214,7 +230,7 @@ while not program_end and gamestate == 0:
                     c = column - 1
                 if(r >= row):
                     r = row - 1
-                if(originalc >(WIDTH+MARGIN)* column and originald<50):
+                if(originalc >(WIDTH+MARGIN)* column and originald<30):
                     if(cheatMode==0):
                         cheatMode=1
                         exe.cheatBoard .reveal_all()
@@ -223,7 +239,7 @@ while not program_end and gamestate == 0:
                         # print_board2()
                     else:
                         cheatMode=0
-                elif(originalc >(WIDTH+MARGIN)* column and originald>50):
+                elif(originalc >(WIDTH+MARGIN)* column and originald>30):
                     cheatMode=0;
 
                     cheat1 = Tk()
@@ -247,6 +263,7 @@ while not program_end and gamestate == 0:
                 pos = pygame.mouse.get_pos()
                 c = pos[0] // (WIDTH + MARGIN)
                 r = pos[1] // (HEIGHT + MARGIN)
+
                 exe.gameBoard.flag_tile(c,r)
                 flagSound.play()
                 flagSound.set_volume(0.1)
