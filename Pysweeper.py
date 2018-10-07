@@ -7,10 +7,14 @@ from tkinter import *
 
 import pygame
 
+import sys
+
 
 
 def print_board2():
     screen.fill(DARKGREY)
+
+
 
     for i in range(row):
         for j in range(column):
@@ -40,6 +44,9 @@ def print_board2():
 
     pygame.draw.rect(screen, (255, 255, 255),
                      ((column * 20 + MARGIN * column + MARGIN), 0, 100,50))
+    screen.blit(font.render('cheatmode!', True, (255, 0, 0)), (column * 20 + MARGIN * column + MARGIN, 20))
+
+
     pygame.display.flip()
 
 
@@ -49,6 +56,9 @@ pygame.display.init()
 
 def print_board():
     screen.fill(DARKGREY)
+
+
+
 
     for i in range(row):
         for j in range(column):
@@ -76,7 +86,9 @@ def print_board():
             if exe.gameBoard.board[j][i].isFlagged == True and exe.gameBoard.board[j][i].isVisible == False:
                 screen.blit(flag,grid[j][i])
 
-    pygame.draw.rect(screen, (255, 255, 255), ((column*20+MARGIN*column+MARGIN), 0, 100,50))
+    pygame.draw.rect(screen, (255, 255, 255), ((column*20+MARGIN*column+MARGIN), 0, 100, 50))
+    screen.blit(font.render('cheatmode!', True, (255, 0, 0)), (column*20+MARGIN*column+MARGIN, 20))
+    pygame.display.update()
     pygame.display.flip()
 
 
@@ -103,6 +115,11 @@ h=2
 b=1
 incorrect = True
 
+winSound = pygame.mixer.Sound("soundEffect/Applause.wav")
+loseSound = pygame.mixer.Sound("soundEffect/Explosion.wav")
+revealSound = pygame.mixer.Sound("soundEffect/Click.wav")
+flagSound = pygame.mixer.Sound("soundEffect/Ding.wav")
+cheaterSound = pygame.mixer.Sound("soundEffect/Cheater.wav")
 
 while (incorrect == True):
     try:
@@ -189,6 +206,7 @@ while not program_end and gamestate == 0:
 
                 pos = pygame.mouse.get_pos()
                 originalc=pos[0]
+                originald=pos[1]
                 # originalr=pos[1]
                 c = pos[0] // (WIDTH + MARGIN)
                 r = pos[1] // (HEIGHT + MARGIN)
@@ -196,13 +214,22 @@ while not program_end and gamestate == 0:
                     c = column - 1
                 if(r >= row):
                     r = row - 1
-                if(originalc >(WIDTH+MARGIN)* column):
+                if(originalc >(WIDTH+MARGIN)* column and originald<50):
                     if(cheatMode==0):
                         cheatMode=1
                         exe.cheatBoard .reveal_all()
+                        cheaterSound.play()
+                        cheaterSound.set_volume(1.0)
                         # print_board2()
                     else:
                         cheatMode=0
+                elif(originalc >(WIDTH+MARGIN)* column and originald>50):
+                    cheatMode=0;
+
+                    cheat1 = Tk()
+                    cheat1.iconbitmap('GUI/MemoryLeakLogo.ico')
+                    Label(cheat1, text="wrong area!", ).grid(row=0)
+                    cheat1.mainloop()
                 else:
                     if(cheatMode==1):
                         cheat1 = Tk()
@@ -211,6 +238,8 @@ while not program_end and gamestate == 0:
                         cheat1.mainloop()
                     else:
                         exe.gameBoard.reveal_tile(c, r)
+                        revealSound.play()
+                        revealSound.set_volume(0.1)
 
 
 
@@ -219,6 +248,8 @@ while not program_end and gamestate == 0:
                 c = pos[0] // (WIDTH + MARGIN)
                 r = pos[1] // (HEIGHT + MARGIN)
                 exe.gameBoard.flag_tile(c,r)
+                flagSound.play()
+                flagSound.set_volume(0.1)
 
     # print_board()
     if(cheatMode==1):
@@ -237,10 +268,14 @@ if (gamestate == 2):
     loseCase = Tk()
     loseCase.iconbitmap('GUI/MemoryLeakLogo.ico')
     Label(loseCase, text="YOU LOSE!!", ).grid(row=0)
+    loseSound.play()
+    loseSound.set_volume(1.0)
     loseCase.mainloop()
 elif (gamestate == 1):
     winCase = Tk()
     winCase.iconbitmap('GUI/MemoryLeakLogo.ico')
     Label(winCase, text="YOU WIN!!", ).grid(row=0)
+    winSound.play()
+    winSound.set_volume(1.0)
     winCase.mainloop()
 pygame.quit()
